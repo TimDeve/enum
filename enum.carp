@@ -33,9 +33,8 @@
   (do
    (eval (cons 'deftype (cons name variants)))
    (eval (reduce (fn [acc x] (append acc x))
-                 (list)
+                 (list 'defmodule name)
                  (list
-                  (list 'defmodule name)
                   (Enum.imp-eq name)
                   (Enum.imp-str variants)
                   (Enum.imp-parse variants))))))

@@ -1,0 +1,44 @@
+(load "Test.carp")
+
+(load "../enum.carp")
+
+(use Test)
+
+(defenum AnEnum One TWO)
+
+(deftest test
+  (assert-equal test
+    &(AnEnum.One)
+    &(AnEnum.One)
+    "compares same values")
+
+  (assert-not-equal test
+    &(AnEnum.One)
+    &(AnEnum.TWO)
+    "compares different values")
+
+  (assert-equal test
+    "One"
+    &(str &(AnEnum.One))
+    "serializes I")
+
+  (assert-equal test
+    "TWO"
+    &(str &(AnEnum.TWO))
+    "serializes II")
+
+  (assert-equal test
+    &(Result.Success (AnEnum.One))
+    &(AnEnum.parse "One")
+    "parses with success I")
+
+  (assert-equal test
+    &(Result.Success (AnEnum.TWO))
+    &(AnEnum.parse "TWO")
+    "parses with success II")
+
+  (assert-equal test
+    &(Result.Error @"No variant matches string")
+    &(AnEnum.parse "NOTHING")
+    "parses with error"))
+

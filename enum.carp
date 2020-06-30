@@ -1,0 +1,42 @@
+(defmodule Enum
+  (defndynamic imp-eq [name]
+    (list (list 'implements '= '=)
+          (list 'defn '= '[a b]
+            (list 'Int.= (list (Symbol.prefix name 'get-tag) 'a)
+                         (list (Symbol.prefix name 'get-tag) 'b)))))
+
+  (defndynamic imp-str [variants]
+    (list (list 'implements 'str 'str)
+          (list 'defn 'str '[verb]
+            (append (list 'match-ref 'verb)
+                    (reduce (fn [acc variant]
+                              (append acc
+                                      (list variant (list 'copy (Symbol.str variant)))))
+                            (list)
+                            variants)))))
+
+  (defndynamic imp-parse [variants]
+    (list
+      (list 'defn 'parse '[string]
+        (append (list 'case 'string)
+                (cons-last
+                  '(Result.Error @"No variant matches string")
+                  (reduce (fn [acc variant]
+                            (append acc
+                                    (list
+                                      (Symbol.str variant)
+                                      (list 'Result.Success (list variant)))))
+                          (list)
+                          variants)))))))
+
+(defmacro defenum [name :rest variants]
+  (do
+   (eval (cons 'deftype (cons name variants)))
+   (eval (reduce (fn [acc x] (append acc x))
+                 (list)
+                 (list
+                  (list 'defmodule name)
+                  (Enum.imp-eq name)
+                  (Enum.imp-str variants)
+                  (Enum.imp-parse variants))))))
+

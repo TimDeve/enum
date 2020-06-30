@@ -2,8 +2,8 @@
   (defndynamic imp-eq [name]
     (list (list 'implements '= '=)
           (list 'defn '= '[a b]
-            (list 'Int.= (list (Symbol.prefix name 'get-tag) 'a)
-                         (list (Symbol.prefix name 'get-tag) 'b)))))
+            (list 'Int.= (list 'get-tag 'a)
+                         (list 'get-tag 'b)))))
 
   (defndynamic imp-str [variants]
     (list (list 'implements 'str 'str)
